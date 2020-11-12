@@ -2,33 +2,30 @@
 clc
 clear all;
 warning('off') % disabled warning messages from importing .fig created by simulink scope
-store_choices = ['current folder', 'one folder above', 'in prefix folder'];
 
 %% -- Settings -- %%
 % Set index of store_at such that:
-% store_at = 1: store in current folder (same folder as this script)
-% store_at = 2: store in above folder
-% store_at = 3: store in new folder under folder where this script is
-store_at = 2;
+% store_at = 'current folder': store in current folder (same folder as this script)
+% store_at = 'above folder': store in one folder above current folder
+% store_at = 'prefix folder': store in new folder under folder where this script is
+store_at = 'above folder';
 figure_title = 'Rogowski coil and current transformer measurements'; % String for title
 filename = 'rog_vs_ideal'; % filename of inputfile in .fig format
 prefix = 'images/'; % The folder where the figure is stored if store_at=3
 x_label = 'Time [t]';
 y_label = 'Current [A]';
 output_type = '.png';
-label_font_size = 18;
-title_font_size = 24;
+label_font_size = 18; % text size for labels, ticks, legend
+title_font_size = 24; % text size for title above plot
 
 %% -- Initial setup -- %
-if strcmp(store_choices(store_at), 'current folder')
+if strcmp(store_at, 'current folder')
     prefix = '';
-elseif strcmp(store_choices(store_at), 'one folder above')
+elseif strcmp(store_at, 'above folder')
     directory = cd;
     folders = strfind(directory,'/');
     prefix = append(directory(1:folders(end)-1), '/');
-elseif strcmp(store_choices(store_at), 'in prefix folder')
-    prefix = prefix
-else
+elseif ~strcmp(store_at, 'prefix folder')
     disp('Store at setting is not correct')
 end
 
