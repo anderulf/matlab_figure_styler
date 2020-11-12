@@ -14,10 +14,14 @@ label_font_size = 18;
 title_font_size = 24;
 
 %% -- Initial setup -- %
+directory  = cd;
+folders   = strfind(directory,'/');
+directory = append(directory(1:folders(end)-1), '/');
+
 input_type = '.fig';
 
-input_file = append(prefix, filename, input_type);
-output_file = append(prefix, filename, output_type);
+input_file = append(directory, filename, input_type);
+output_file = append(directory, filename, output_type);
 
 % Open filename
 disp(append('Styling figure: ', input_file))
@@ -25,7 +29,7 @@ fig = openfig(input_file, 'invisible');
 axes = fig.CurrentAxes;
 legend = axes.Legend;
 %% Set basic data
-fig.Name = append('Figure Styling for: ', output_file); % name of window 
+fig.Name = append('Figure Styling for: ', filename); % name of window 
 
 %% -- Set labels -- %%
 xlabel(x_label);
