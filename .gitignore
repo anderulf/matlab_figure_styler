@@ -1,3 +1,4 @@
-.slx
-.m~
-slprj/.
+*.slx
+*.m~
+slprj/
+*.slxc
