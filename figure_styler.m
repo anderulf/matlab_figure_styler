@@ -1,6 +1,6 @@
 %% ------ Add style to figure ----- %%
-clear legend
-warning('off') % disabled warning messages from importing .fig created by simulink scope
+clear legend % legend must be cleared for it to be added from cell of strings later
+
 %% -- Data -- %%
 % Change this array to the values you want to plot ie. voltage to plot
 % out.voltage
@@ -24,6 +24,7 @@ y_label = 'Current [A]';
 label_font_size = 18; % text size for labels, ticks, legend
 title_font_size = 24; % text size for title above plot
 line_width = 1; % thichkness of lines in plot
+overlapping_lines = 0; % adds dashed to ? lines
 % Situational
 prefix = 'images/'; % The folder where the figure is stored if store_at=3
 
@@ -99,10 +100,12 @@ axes.Legend.EdgeColor = 'black';
 axes.Legend.Location = 'northeast';
 
 %% -- Line properties -- %%
-lines = findobj(fig, 'Type', 'Line')
+lines = findobj(fig, 'Type', 'Line');
 for i = i:length(lines)
     lines(i).LineWidth = line_width;
-    lines(i).LineStyle = ':'
+    if overlapping_lines == 1
+        lines(i).LineStyle = ':'
+    end
 end
 
 %% -- Finalizing -- %%
