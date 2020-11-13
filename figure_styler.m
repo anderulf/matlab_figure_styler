@@ -5,14 +5,15 @@ clear legend % legend must be cleared for it to be added from cell of strings la
 % Change this array to the values you want to plot ie. voltage to plot
 % out.voltage
 % Input should be a timeseries from simulink with Data and Time values. 
-input_data = [out.I_C, out.I_rog]; 
+input_data = [out.I_C, out.I_rogC]; 
 
 %% -- Settings -- %%
 % Set index of store_at such that:
 % store_at = 'current folder': store in current folder (same folder as this script)
 % store_at = 'above folder': store in one folder above current folder
-% store_at = 'prefix folder': store in new folder under folder where this script is
-store_at = 'above folder';
+% store_at = 'directory': store in directory inputted, ue cd in command
+% window to print the directory of the current folder
+store_at = 'directory';
 % File settings
 filename = 'rog_vs_ideal_phase_C'; % filename of output in output_type format
 output_type = '.png';
@@ -27,20 +28,29 @@ line_width = 1; % thichkness of lines in plot
 overlapping_lines = 1; % adds dashed to ? lines
 % Situational
 custom_xlim = [0, 0.05]; % Native: 0, Custom: [x0, xn]
-prefix = 'images/'; % The folder where the figure is stored if store_at=3
+directory = '/Users/AUlfsnes/Documents/Skole/Prosjektoppgave/Simulink/images/'; % The folder where the figure is stored if store_at=='directroy'
 
 %% -- Initial setup -- %
+if strcmp(output_type, '.png')
+    formattype = '-dpng';
+elseif strcmp(output_type, '.eps')
+    formattype = '-depsc';
+elseif strcmp(output_type, '.jpg')
+    formattype = '-djpeg'
+else
+    disp(append('Error: File type : ', output_type, ' is not supported.'))
+end
 if strcmp(store_at, 'current folder')
-    prefix = '';
+    directory = '';
 elseif strcmp(store_at, 'above folder')
-    directory = cd;
-    folders = strfind(directory,'/');
-    prefix = append(directory(1:folders(end)-1), '/');
-elseif ~strcmp(store_at, 'prefix folder')
+    current_directory = cd;
+    folders = strfind(current_directory,'/');
+    directory = append(current_directory(1:folders(end)-1), '/');
+elseif ~strcmp(store_at, 'directory')
     disp('store_at setting is not correct')
 end
 
-output_file = append(prefix, filename, output_type);
+output_file = append(directory, filename, output_type);
 
 disp('Creating plot from workshop data')
 fig = gcf;
@@ -52,7 +62,7 @@ end
 % disp(append('Styling figure: ', input_file))
 % for importing figure
 % input_type = '.fig';
-% input_file = append(prefix, filename, input_type);
+% input_file = append(directory, filename, input_type);
 % fig = openfig(input_file, 'invisible');
 axes = gca;
 
@@ -120,6 +130,6 @@ disp('Styling finished sucessfully!')
 %fig.Visible = 'On'; % show changed figure
 fig.PaperPositionMode = 'auto'; % Supress resizing
 fig.InvertHardcopy = 'off'; % setting 'grid color reset' off
-print('ScreenSizeFigure','-dpng','-r600')
-saveas(fig, output_file) % save to file
+print(output_file, formattype,'-r0')
+%saveas(fig, output_file) % save to file
 disp(append('Figure saved as: ', output_file))
