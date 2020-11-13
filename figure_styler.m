@@ -5,7 +5,7 @@ clear legend % legend must be cleared for it to be added from cell of strings la
 % Change this array to the values you want to plot ie. voltage to plot
 % out.voltage
 % Input should be a timeseries from simulink with Data and Time values. 
-input_data = [out.I_A, out.I_rog]; 
+input_data = [out.I_C, out.I_rog]; 
 
 %% -- Settings -- %%
 % Set index of store_at such that:
@@ -14,18 +14,19 @@ input_data = [out.I_A, out.I_rog];
 % store_at = 'prefix folder': store in new folder under folder where this script is
 store_at = 'above folder';
 % File settings
-filename = 'rog_vs_ideal'; % filename of output in output_type format
-output_type = '.eps';
+filename = 'rog_vs_ideal_phase_C'; % filename of output in output_type format
+output_type = '.png';
 
 % Formatting
-figure_title = 'Rogowski Coil And Ideal Current Measurements'; % String for title
+figure_title = 'Rogowski Coil and Ideal Current Measurements on phase C'; % String for title
 x_label = 'Time [t]';
 y_label = 'Current [A]';
-label_font_size = 18; % text size for labels, ticks, legend
-title_font_size = 24; % text size for title above plot
+label_font_size = 16; % text size for labels, ticks, legend
+title_font_size = 20; % text size for title above plot
 line_width = 1; % thichkness of lines in plot
 overlapping_lines = 1; % adds dashed to ? lines
 % Situational
+custom_xlim = [0, 0.05]; % Native: 0, Custom: [x0, xn]
 prefix = 'images/'; % The folder where the figure is stored if store_at=3
 
 %% -- Initial setup -- %
@@ -41,14 +42,14 @@ end
 
 output_file = append(prefix, filename, output_type);
 
-% Open filename
-disp(append('Styling figure: ', input_file))
+disp('Creating plot from workshop data')
 fig = gcf;
 hold on
 for i = 1:length(input_data)
     plot(input_data(i).Time, input_data(i).Data, 'DisplayName', input_data(i).Name)
 end
-
+% Open filename
+% disp(append('Styling figure: ', input_file))
 % for importing figure
 % input_type = '.fig';
 % input_file = append(prefix, filename, input_type);
@@ -56,8 +57,13 @@ end
 axes = gca;
 
 %% Set basic data
-fig.Name = filename; % name of window 
-axes.XLim = [0, input_data(1).Time(end)];
+fig.Name = filename; % name of window
+if length(custom_xlim) ~= 1
+    disp('Note: Custom XLim was used')
+    axes.XLim = custom_xlim;
+else
+    axes.XLim = [input_data(1).Time(1), input_data(1).Time(end)];
+end
 %% -- Set labels -- %%
 xlabel(x_label);
 ylabel(y_label);
@@ -111,8 +117,9 @@ end
 
 %% -- Finalizing -- %%
 disp('Styling finished sucessfully!')
-fig.Visible = 'On'; % show changed figure
-set(fig, 'PaperPositionMode', 'auto') % Supress resizing
-set(fig, 'InvertHardCopy', 'off'); % setting 'grid color reset' off
+%fig.Visible = 'On'; % show changed figure
+fig.PaperPositionMode = 'auto'; % Supress resizing
+fig.InvertHardcopy = 'off'; % setting 'grid color reset' off
+print('ScreenSizeFigure','-dpng','-r600')
 saveas(fig, output_file) % save to file
-disp(append('Figure saved as: ', cd, output_file))
+disp(append('Figure saved as: ', output_file))
