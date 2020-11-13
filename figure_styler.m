@@ -57,7 +57,7 @@ axes = gca;
 
 %% Set basic data
 fig.Name = filename; % name of window 
-axes.XLim = [0, input_data(1).Time(end)]
+axes.XLim = [0, input_data(1).Time(end)];
 %% -- Set labels -- %%
 xlabel(x_label);
 ylabel(y_label);
@@ -92,7 +92,7 @@ axes.Title.Color = 'black';
 for i = 1:length(input_data)
     legendCell{i} = input_data(i).Name;
 end
-legend(legendCell)
+legend(legendCell);
 axes.Legend.FontSize = label_font_size;
 axes.Legend.Color = 'white';
 axes.Legend.TextColor = 'black';
