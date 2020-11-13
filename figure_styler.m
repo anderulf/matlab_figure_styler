@@ -24,7 +24,7 @@ y_label = 'Current [A]';
 label_font_size = 18; % text size for labels, ticks, legend
 title_font_size = 24; % text size for title above plot
 line_width = 1; % thichkness of lines in plot
-overlapping_lines = 0; % adds dashed to ? lines
+overlapping_lines = 1; % adds dashed to ? lines
 % Situational
 prefix = 'images/'; % The folder where the figure is stored if store_at=3
 
@@ -104,7 +104,7 @@ lines = findobj(fig, 'Type', 'Line');
 for i = i:length(lines)
     lines(i).LineWidth = line_width;
     if overlapping_lines == 1
-        lines(i).LineStyle = ':'
+        lines(i).LineStyle = ':';
     end
 end
 
