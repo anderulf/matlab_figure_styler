@@ -18,7 +18,7 @@ filename = 'rog_vs_ideal'; % filename of output in output_type format
 output_type = '.png';
 
 % Formatting
-figure_title = 'Rogowski Coil And Ideal Measurements during Three Phase Fault'; % String for title
+figure_title = 'Rogowski Coil And Ideal Current Measurements'; % String for title
 x_label = 'Time [t]';
 y_label = 'Current [A]';
 label_font_size = 18; % text size for labels, ticks, legend
@@ -78,8 +78,9 @@ axes.FontSize = label_font_size;
 %% -- Set title -- %%
 axes.Title.FontSize = title_font_size;
 if length(figure_title) >= 40
-    spaces = strfind(figure_title, ' ');
-    index = spaces(ceil(length(spaces)/1.9));
+    spaces = strfind(figure_title, ' ')
+    possible_indices = find(spaces >= (length(figure_title)/2))
+    index = spaces(possible_indices(1))
     first_sub = extractBefore(figure_title, index);
     second_sub = extractAfter(figure_title, index);
     axes.Title.String = append(first_sub, newline, second_sub);
