@@ -1,6 +1,4 @@
 %% ------ Add style to figure ----- %%
-clc
-clear all;
 warning('off') % disabled warning messages from importing .fig created by simulink scope
 
 %% -- Settings -- %%
