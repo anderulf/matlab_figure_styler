@@ -16,7 +16,7 @@ input_data = [out.I_C, out.I_rogC];
 store_at = 'directory';
 % File settings
 filename = 'rog_vs_ideal_phase_C'; % filename of output in output_type format
-output_type = '.png';
+output_type = '.eps'; % '.png', '.eps' or '.jpg'
 
 % Formatting
 figure_title = 'Rogowski Coil and Ideal Current Measurements on phase C'; % String for title
@@ -129,7 +129,8 @@ end
 disp('Styling finished sucessfully!')
 %fig.Visible = 'On'; % show changed figure
 fig.PaperPositionMode = 'auto'; % Supress resizing
+fig.Renderer = 'painters'; % Use painter rendering mode for better 2D rendering
 fig.InvertHardcopy = 'off'; % setting 'grid color reset' off
-print(output_file, formattype,'-r0')
+print(output_file, formattype)
 %saveas(fig, output_file) % save to file
 disp(append('Figure saved as: ', output_file))
