@@ -1,11 +1,12 @@
 %% ------ Add style to figure ----- %%
 clear legend % legend must be cleared for it to be added from cell of strings later
+close all
 
 %% -- Data -- %%
 % Change this array to the values you want to plot ie. voltage to plot
 % out.voltage
 % Input should be a timeseries from simulink with Data and Time values. 
-input_data = [out.I_C, out.I_rogC]; 
+input_data = [out.I_A, out.I_rogA]; 
 
 %% -- Settings -- %%
 % Set index of store_at such that:
@@ -15,11 +16,11 @@ input_data = [out.I_C, out.I_rogC];
 % window to print the directory of the current folder
 store_at = 'directory';
 % File settings
-filename = 'rog_vs_ideal_phase_C'; % filename of output in output_type format
+filename = 'rog_vs_ideal_phase_A'; % filename of output in output_type format
 output_type = '.eps'; % '.png', '.eps' or '.jpg'
 
 % Formatting
-figure_title = 'Rogowski Coil and Ideal Current Measurements on phase C'; % String for title
+figure_title = 'Rogowski Coil and Ideal Current Measurements on phase A'; % String for title
 x_label = 'Time [t]';
 y_label = 'Current [A]';
 label_font_size = 16; % text size for labels, ticks, legend
@@ -54,6 +55,7 @@ output_file = append(directory, filename, output_type);
 
 disp('Creating plot from workshop data')
 fig = gcf;
+fig.Visible = 'off'; % Do not show figure before it has been styled
 hold on
 for i = 1:length(input_data)
     plot(input_data(i).Time, input_data(i).Data, 'DisplayName', input_data(i).Name)
@@ -118,19 +120,19 @@ axes.Legend.Location = 'northeast';
 
 %% -- Line properties -- %%
 lines = findobj(fig, 'Type', 'Line');
-for i = i:length(lines)
+for i = 1:length(lines)
     lines(i).LineWidth = line_width;
-    if overlapping_lines == 1
+    if overlapping_lines == 1 && rem(i,2) == 0
         lines(i).LineStyle = ':';
+        lines(i).LineWidth = 2*line_width; % compensate for visibility
     end
 end
 
 %% -- Finalizing -- %%
 disp('Styling finished sucessfully!')
-%fig.Visible = 'On'; % show changed figure
+fig.Visible = 'on'; % show changed figure
 fig.PaperPositionMode = 'auto'; % Supress resizing
 fig.Renderer = 'painters'; % Use painter rendering mode for better 2D rendering
 fig.InvertHardcopy = 'off'; % setting 'grid color reset' off
-print(output_file, formattype)
-%saveas(fig, output_file) % save to file
+%print(fig, output_file, formattype) % save to file
 disp(append('Figure saved as: ', output_file))
