@@ -6,7 +6,7 @@ close all
 % Change this array to the values you want to plot ie. voltage to plot
 % out.voltage
 % Input should be a timeseries from simulink with Data and Time values. 
-input_data = [out.I_A, out.I_rogA]; 
+input_data = [ideal_current, R10e2, R50e2, R10e3, R10e4]; 
 
 %% -- Settings -- %%
 % Set index of store_at such that:
@@ -16,22 +16,25 @@ input_data = [out.I_A, out.I_rogA];
 % window to print the directory of the current folder
 store_at = 'directory';
 % File settings
-filename = 'rog_vs_ideal_phase_A'; % filename of output in output_type format
+filename = 'rc_output_load_test'; % filename of output in output_type format
 output_type = '.eps'; % '.png', '.eps' or '.jpg'
 
 % Formatting
-figure_title = 'Rogowski Coil and Ideal Current Measurements on phase A'; % String for title
+figure_title = 'Rogowski Coil Measurements for Different Output Loads'; % String for title
 x_label = 'Time [t]';
 y_label = 'Current [A]';
 label_font_size = 16; % text size for labels, ticks, legend
 title_font_size = 20; % text size for title above plot
-line_width = 1; % thichkness of lines in plot
+line_width = 1; % thickness of lines in plot
 overlapping_lines = 1; % adds dashed to ? lines
+overlap_line = 5; % Set which should be dashed, 0 every other. 1-> last line
 % Situational
-custom_xlim = [0, 0.05]; % Native: 0, Custom: [x0, xn]
+custom_xlim = [0, 0.05];%0; % Native: 0, Custom: [x0, xn]
 directory = '/Users/AUlfsnes/Documents/Skole/Prosjektoppgave/Simulink/images/'; % The folder where the figure is stored if store_at=='directroy'
+unit_change = 1; % Change units with this value to get the unit in the labels ie 10e-3 to get kV, 1 for none
 
 %% -- Initial setup -- %
+% Set output format type
 if strcmp(output_type, '.png')
     formattype = '-dpng';
 elseif strcmp(output_type, '.eps')
@@ -41,6 +44,7 @@ elseif strcmp(output_type, '.jpg')
 else
     disp(append('Error: File type : ', output_type, ' is not supported.'))
 end
+% Set directory
 if strcmp(store_at, 'current folder')
     directory = '';
 elseif strcmp(store_at, 'above folder')
@@ -51,21 +55,15 @@ elseif ~strcmp(store_at, 'directory')
     disp('store_at setting is not correct')
 end
 
-output_file = append(directory, filename, output_type);
-
 disp('Creating plot from workshop data')
 fig = gcf;
 fig.Visible = 'off'; % Do not show figure before it has been styled
 hold on
+% Plot data from input_data
 for i = 1:length(input_data)
-    plot(input_data(i).Time, input_data(i).Data, 'DisplayName', input_data(i).Name)
+    plot(input_data(i).Time, input_data(i).Data*unit_change, 'DisplayName', input_data(i).Name)
 end
-% Open filename
-% disp(append('Styling figure: ', input_file))
-% for importing figure
-% input_type = '.fig';
-% input_file = append(directory, filename, input_type);
-% fig = openfig(input_file, 'invisible');
+% Extract axes from get current axis
 axes = gca;
 
 %% Set basic data
@@ -122,7 +120,11 @@ axes.Legend.Location = 'northeast';
 lines = findobj(fig, 'Type', 'Line');
 for i = 1:length(lines)
     lines(i).LineWidth = line_width;
-    if overlapping_lines == 1 && rem(i,2) == 0
+    if overlap_line ~= 0 && i == overlap_line
+        lines(i).LineStyle = ':';
+        lines(i).LineWidth = 2*line_width; % compensate for visibility¨
+    end
+    if overlapping_lines == 1 && rem(i,2) == 0 && overlap_line == 0
         lines(i).LineStyle = ':';
         lines(i).LineWidth = 2*line_width; % compensate for visibility
     end
@@ -134,5 +136,26 @@ fig.Visible = 'on'; % show changed figure
 fig.PaperPositionMode = 'auto'; % Supress resizing
 fig.Renderer = 'painters'; % Use painter rendering mode for better 2D rendering
 fig.InvertHardcopy = 'off'; % setting 'grid color reset' off
-%print(fig, output_file, formattype) % save to file
+duplicate = 1;
+saved_duplicate = 0;
+while 1
+    if isfile(append(directory, filename, output_type))
+        if duplicate > 1 % Remove the last duplicate label
+            indices = strfind(filename, '_'); % Find underscores
+            index = indices(end); % Extract last element
+            filename = extractBefore(filename, index);
+        end
+        filename = append(filename, '_', num2str(duplicate)) ;
+        duplicate = duplicate + 1;
+        saved_duplicate = 1;
+    else
+        break
+    end
+end 
+if saved_duplicate == 1
+    disp('Note: file already exists, saving duplicate')
+end
+% Create output file name with resulting filename
+output_file = append(directory, filename, output_type);
+print(fig, output_file, formattype) % save to file
 disp(append('Figure saved as: ', output_file))
